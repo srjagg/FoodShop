@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FoodShop.Model\FoodShop.Model.csproj" />
+    <ProjectReference Include="..\FoodShop.Repository\FoodShop.Repository.csproj" />
+  </ItemGroup>
+
 </Project>
