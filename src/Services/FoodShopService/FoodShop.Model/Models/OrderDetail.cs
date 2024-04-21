@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FoodShop.Model.Models
-{
+﻿
+namespace FoodShop.Model.Models{
     public class OrderDetail
     {
         public int OrderDetailId { get; set; }
