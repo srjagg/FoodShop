@@ -1,14 +1,14 @@
-﻿using FoodShop.Model.Models;
-using FoodShop.Repository;
+﻿using FoodShop.Repository.RepositoryInterface;
 
 namespace FoodShop.UnitOfWork
 {
     public interface IUnitOfWork
     {
-        IRepository<User> UserRepository { get; }
-        IRepository<Food> FoodRepository { get; }
-        IRepository<Order> OrderRepository { get; }
-        IRepository<OrderDetail> OrderDetailRepository { get; }
+        IUserRepository UserRepository { get; }
+        IOrderRepository OrderRepository { get; }
+        IFoodRepository FoodRepository { get; }
+        IOrderDetailRepository OrderDetailRepository { get; }
+        ILoginRepository LoginRepository { get; }
 
         void SaveChanges();
         Task SaveChangesAsync();
