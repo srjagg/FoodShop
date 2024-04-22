@@ -6,4 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FoodShop.Model\FoodShop.Model.csproj" />
+    <ProjectReference Include="..\FoodShop.Repository\FoodShop.Repository.csproj" />
+    <ProjectReference Include="..\FoodShop.UnitOfWork\FoodShop.UnitOfWork.csproj" />
+  </ItemGroup>
+
 </Project>
