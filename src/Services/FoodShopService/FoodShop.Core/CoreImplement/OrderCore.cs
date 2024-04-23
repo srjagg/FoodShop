@@ -3,6 +3,7 @@ using FoodShop.Core.Util;
 using FoodShop.Model.Models;
 using FoodShop.Model.ModelsDto;
 using FoodShop.UnitOfWork;
+using System.Text;
 
 namespace FoodShop.Core.CoreImplement
 {
@@ -10,11 +11,13 @@ namespace FoodShop.Core.CoreImplement
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOrderDetailCore _orderDetailCore;
+        private readonly EmailCore _emailCore;
 
-        public OrderCore(IUnitOfWork unitOfWork, IOrderDetailCore orderDetailCore)
+        public OrderCore(IUnitOfWork unitOfWork, IOrderDetailCore orderDetailCore, EmailCore emailCore)
         {
             _unitOfWork = unitOfWork;
             _orderDetailCore = orderDetailCore;
+            _emailCore = emailCore;
         }
         public async Task<PetitionResponse<int>> PlaceOrderAsync(OrderDto orderDto)
         {
@@ -90,6 +93,9 @@ namespace FoodShop.Core.CoreImplement
 
                 }
 
+                var orderDetails = GetOrderDetails(orderDto); 
+                await _emailCore.SendOrderConfirmationEmailAsync(user.Email, orderDetails);
+
                 foreach (var orderDetailDto in orderDto.OrderDetails)
                 {
 
@@ -129,5 +135,22 @@ namespace FoodShop.Core.CoreImplement
             }
             
         }
+
+        private string GetOrderDetails(OrderDto orderDto)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("Detalles del pedido:");
+
+            foreach (var orderDetail in orderDto.OrderDetails)
+            {
+                sb.AppendLine($"- {orderDetail.Quantity} x {orderDetail.FoodName}: ${orderDetail.Quantity * orderDetail.UnitPrice}");
+            }
+
+            sb.AppendLine($"Total: ${orderDto.OrderDetails.Sum(d => d.Quantity * d.UnitPrice)}");
+
+            return sb.ToString();
+        }
+
     }
 }

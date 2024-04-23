@@ -1,12 +1,14 @@
 using FoodShop.Core.CoreImplement;
 using FoodShop.Core.CoreInterface;
 using FoodShop.Core.FluentValidation;
+using FoodShop.Model.Models;
 using FoodShop.Persistence;
 using FoodShop.Repository.RepositoryImplement;
 using FoodShop.Repository.RepositoryInterface;
 using FoodShop.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -17,6 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Inyectamos el contexto
 builder.Services.AddDbContext<FoodShopDbContext>();
 
 //FluentValidation
@@ -41,6 +44,16 @@ builder.Services.AddScoped<IFoodCore, FoodCore>();
 builder.Services.AddScoped<IOrderCore, OrderCore>();
 builder.Services.AddScoped<IOrderCore, OrderCore>();
 builder.Services.AddScoped<IOrderDetailCore, OrderDetailCore>();
+
+// Registra las credenciales SMTP como opciones
+builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
+
+// Registra EmailCore como un servicio Singleton, proporcionando las dependencias necesarias en su constructor
+builder.Services.AddSingleton(sp =>
+{
+    var smtpOptions = sp.GetRequiredService<IOptions<SmtpOptions>>().Value;
+    return new EmailCore(smtpOptions.Host, smtpOptions.Port, smtpOptions.Username, smtpOptions.Password);
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
