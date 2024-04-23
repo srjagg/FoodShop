@@ -1,6 +1,7 @@
 ﻿using FoodShop.Model.Models;
 using FoodShop.Persistence;
 using FoodShop.Repository.RepositoryInterface;
+using Microsoft.EntityFrameworkCore;
 
 namespace FoodShop.Repository.RepositoryImplement
 {
@@ -31,7 +32,7 @@ namespace FoodShop.Repository.RepositoryImplement
             return await GetAllAsync();
         }
 
-        public async Task<Food?> GetByIdAsync(int id)
+        public async Task<Food?> GetFoodByIdAsync(int id)
         {         
             var food = await GetByIDAsync(id);
 
@@ -39,6 +40,10 @@ namespace FoodShop.Repository.RepositoryImplement
                 return null;
 
             return food;
+        }
+        public async Task<List<Food>> GetAvailableFoods()
+        {
+            return await _context.Foods.Where(food => food.AvailableQuantity > 0).ToListAsync();
         }
 
         public async Task<bool> UpdateFoodAsync(Food food)

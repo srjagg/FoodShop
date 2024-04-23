@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using FoodShop.Model.Models;
+using FoodShop.Model.ModelsDto;
 
 namespace FoodShop.Core.FluentValidation
 {
-    public class FoodValidator : AbstractValidator<Food>
+    public class FoodValidator : AbstractValidator<FoodDto>
     {
         public FoodValidator()
         {

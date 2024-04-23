@@ -1,21 +1,20 @@
 ﻿using FoodShop.Model.Models;
 using FoodShop.Persistence;
 using FoodShop.Repository.RepositoryInterface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FoodShop.Repository.RepositoryImplement
 {
     public class OrderDetailRepository : Repository<OrderDetail>, IOrderDetailRepository
     {
-        private readonly FoodShopDbContext _context;
+        public OrderDetailRepository(FoodShopDbContext context) : base(context) { }
 
-        public OrderDetailRepository(FoodShopDbContext context) : base(context)
+        public async Task<int> AddOrderDetailAsync(OrderDetail orderDetail)
         {
-            _context = context;
+            if (_context.OrderDetails is not null)
+            {
+                return await InsertAsync(orderDetail);
+            }
+            return 1;
         }
     }
 }

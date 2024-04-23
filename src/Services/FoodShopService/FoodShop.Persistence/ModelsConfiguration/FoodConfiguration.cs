@@ -14,6 +14,10 @@ namespace FoodShop.Persistence.ModelsConfiguration
             builder.Property(f => f.Description).IsRequired();
             builder.Property(f => f.Price).IsRequired().HasColumnType("decimal(18,2)");
             builder.Property(f => f.AvailableQuantity).IsRequired();
+
+            builder.HasMany(f => f.OrderDetails)
+              .WithOne(od => od.Food)
+              .HasForeignKey(od => od.FoodId);
         }
     }
 }

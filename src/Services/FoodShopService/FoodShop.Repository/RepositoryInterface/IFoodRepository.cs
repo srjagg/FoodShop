@@ -7,7 +7,8 @@ namespace FoodShop.Repository.RepositoryInterface
         Task<int> AddFoodAsync(Food food);
         Task<bool> UpdateFoodAsync(Food food);
         Task<bool> DeleteFoodAsync(Food food);
-        Task<Food?> GetByIdAsync(int id);
+        Task<Food?> GetFoodByIdAsync(int id);
         Task<IEnumerable<Food>> GetAllFoodAsync();
+        Task<List<Food>> GetAvailableFoods();
     }
 }

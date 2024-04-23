@@ -8,6 +8,15 @@ namespace FoodShop.Repository.RepositoryImplement
     {
         public UserRepository(FoodShopDbContext context) : base(context){ }
 
+        public async Task<User?> GetUserByIdAsync(int id)
+        {
+            var user = await GetByIDAsync(id);
+
+            if (user is null)
+                return null;
+
+            return user;
+        }
         public async Task<int> AddUserAsync(User user)
         {
             if(_context.Users is not null)

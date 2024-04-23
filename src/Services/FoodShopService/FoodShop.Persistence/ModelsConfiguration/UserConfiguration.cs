@@ -13,6 +13,10 @@ namespace FoodShop.Persistence.ModelsConfiguration
             builder.Property(u => u.Name).IsRequired();
             builder.Property(u => u.Email).IsRequired();
             builder.Property(u => u.Password).IsRequired();
+
+            builder.HasMany(u => u.Orders)
+              .WithOne(o => o.User)
+              .HasForeignKey(o => o.UserId);
         }
     }
 }

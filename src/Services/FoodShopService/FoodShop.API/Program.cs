@@ -38,6 +38,9 @@ builder.Services.AddScoped<ILoginCore, LoginCore>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IUserCore, UserCore>();
 builder.Services.AddScoped<IFoodCore, FoodCore>();
+builder.Services.AddScoped<IOrderCore, OrderCore>();
+builder.Services.AddScoped<IOrderCore, OrderCore>();
+builder.Services.AddScoped<IOrderDetailCore, OrderDetailCore>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

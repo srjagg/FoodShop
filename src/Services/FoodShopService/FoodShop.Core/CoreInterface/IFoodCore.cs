@@ -1,13 +1,15 @@
 ﻿using FoodShop.Core.Util;
 using FoodShop.Model.Models;
+using FoodShop.Model.ModelsDto;
 
 namespace FoodShop.Core.CoreInterface
 {
     public interface IFoodCore
     {
-        Task<PetitionResponse<int>> AddFoodAsync(Food food);
-        Task<PetitionResponse<bool>> UpdateFoodAsync(int foodId, Food food);
+        Task<PetitionResponse<int>> AddFoodAsync(FoodDto foodDto);
+        Task<PetitionResponse<bool>> UpdateFoodAsync(int foodId, FoodDto foodDto);
         Task<PetitionResponse<bool>> DeleteFoodAsync(int foodId);
-        Task<PetitionResponse<IEnumerable<Food>>> GetAllFoodAsync();
+        Task<PetitionResponse<IEnumerable<FoodDto>>> GetAllFoodAsync();
+        Task<PetitionResponse<List<FoodDto>>> GetAvailableFoods();
     }
 }

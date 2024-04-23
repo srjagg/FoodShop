@@ -1,13 +1,9 @@
 ﻿using FoodShop.Model.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FoodShop.Repository.RepositoryInterface
 {
     public interface IOrderDetailRepository : IRepository<OrderDetail>
     {
+        Task<int> AddOrderDetailAsync(OrderDetail orderDetail);
     }
 }

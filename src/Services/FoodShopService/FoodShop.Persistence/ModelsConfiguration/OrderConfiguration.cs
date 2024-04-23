@@ -13,10 +13,10 @@ namespace FoodShop.Persistence.ModelsConfiguration
             builder.Property(o => o.OrderDate).IsRequired();
             builder.Property(o => o.Total).IsRequired().HasColumnType("decimal(18,2)");
 
-            builder.HasOne(o => o.User)
-                .WithMany(u => u.Orders)
-                .HasForeignKey(o => o.UserId)
-                .IsRequired();
+
+            builder.HasMany(o => o.OrderDetails)
+               .WithOne(od => od.Order)
+               .HasForeignKey(od => od.OrderId);
         }
     }
 }
