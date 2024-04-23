@@ -1,5 +1,6 @@
 using FoodShop.Core.CoreImplement;
 using FoodShop.Core.CoreInterface;
+using FoodShop.Core.FluentValidation;
 using FoodShop.Persistence;
 using FoodShop.Repository.RepositoryImplement;
 using FoodShop.Repository.RepositoryInterface;
@@ -17,6 +18,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<FoodShopDbContext>();
 
+//FluentValidation
+builder.Services.AddTransient<UserValidator>();
+
 //UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -30,6 +34,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 //Core
 builder.Services.AddScoped<ILoginCore, LoginCore>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<IUserCore, UserCore>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
