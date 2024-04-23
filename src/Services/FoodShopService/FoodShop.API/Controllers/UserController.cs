@@ -1,8 +1,5 @@
 ﻿using FoodShop.Core.CoreInterface;
-using FoodShop.Core.Util;
-using FoodShop.Model.Models;
 using FoodShop.Model.ModelsDto;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodShop.API.Controllers

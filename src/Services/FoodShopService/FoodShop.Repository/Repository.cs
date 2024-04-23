@@ -18,8 +18,8 @@ namespace FoodShop.Repository
 
         public async Task<bool> Delete(T entity)
         {
-            await Task.Yield();
-            _context.Entry(entity).State = EntityState.Deleted;
+            _context.Set<T>().Remove(entity);
+            await _context.SaveChangesAsync();
             return true;
         }
 

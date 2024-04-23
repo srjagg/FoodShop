@@ -4,7 +4,7 @@ namespace FoodShop.Repository
 {
     public interface IRepository<T> where T : class
     {
-        Task<T> GetByIDAsync(string id);
+        Task<T> GetByIDAsync(int id);
 
         Task<IEnumerable<T>> GetAllAsync();
 

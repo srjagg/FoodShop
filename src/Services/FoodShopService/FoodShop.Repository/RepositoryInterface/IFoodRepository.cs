@@ -4,9 +4,10 @@ namespace FoodShop.Repository.RepositoryInterface
 {
     public interface IFoodRepository : IRepository<Food>
     {
-        Task AddFoodAsync(Food food);
-        void UpdateFood(Food food);
-        void DeleteFood(Food food);
-        Task<IEnumerable<Food>> GetAllFoodsAsync();
+        Task<int> AddFoodAsync(Food food);
+        Task<bool> UpdateFoodAsync(Food food);
+        Task<bool> DeleteFoodAsync(Food food);
+        Task<Food?> GetByIdAsync(int id);
+        Task<IEnumerable<Food>> GetAllFoodAsync();
     }
 }
