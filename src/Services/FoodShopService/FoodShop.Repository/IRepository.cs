@@ -1,14 +1,25 @@
-﻿namespace FoodShop.Repository
+﻿using System.Data;
+
+namespace FoodShop.Repository
 {
     public interface IRepository<T> where T : class
     {
-        IEnumerable<T> GetAll();
+        Task<T> GetByIDAsync(string id);
+
         Task<IEnumerable<T>> GetAllAsync();
-        T GetById(int id);
-        Task<T> GetByIdAsync(int id);
-        void Insert(T entity);
-        Task InsertAsync(T entity);
-        void Update(T entity);
-        void Delete(T entity);
+
+        Task<int> InsertAsync(T entity);
+
+        Task<bool> UpdateAsync<TEntity>(TEntity entity);
+
+        Task<bool> Delete(T entity);
+
+        Task<bool> Delete<TEntry>(TEntry entity);
+
+        Task Add<TEntity>(TEntity entity);
+
+        void ModifiedState<TEntity>(TEntity entity);
+
+        Task<int> SaveChanges();
     }
 }

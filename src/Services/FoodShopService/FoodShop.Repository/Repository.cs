@@ -1,55 +1,67 @@
 ﻿using FoodShop.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace FoodShop.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        protected readonly FoodShopDbContext _dbContext;
-        public Repository(FoodShopDbContext dbContext)
+        protected readonly FoodShopDbContext _context;
+        public Repository(FoodShopDbContext context)
         {
-            _dbContext = dbContext;
+            _context = context;
+        }
+        public async Task Add<TEntity>(TEntity entity)
+        {
+            await _context.AddAsync((object)entity, default(CancellationToken));
         }
 
-        public IEnumerable<T> GetAll()
+        public async Task<bool> Delete(T entity)
         {
-            return _dbContext.Set<T>().ToList();
+            await Task.Yield();
+            _context.Entry(entity).State = EntityState.Deleted;
+            return true;
+        }
+
+        public async Task<bool> Delete<TEntry>(TEntry entity)
+        {
+            await Task.Yield();
+            _context.Entry((object)entity).State = EntityState.Deleted;
+            return true;
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await _dbContext.Set<T>().ToListAsync();
+            return await _context.Set<T>().ToListAsync();
         }
 
-        public T GetById(int id)
+        public async Task<T> GetByIDAsync(int id)
         {
-            return _dbContext.Set<T>().Find(id);
+            return await _context.Set<T>().FindAsync(id);
+        }
+        public async Task<int> InsertAsync(T entity)
+        {
+            await _context.AddAsync(entity, default(CancellationToken));
+            return await _context.SaveChangesAsync();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<int> SaveChanges()
         {
-            return await _dbContext.Set<T>().FindAsync(id);
+            return await _context.SaveChangesAsync();
         }
 
-        public void Insert(T entity)
+        public void ModifiedState<TEntry>(TEntry entity)
         {
-            _dbContext.Set<T>().Add(entity);
+            _context.Entry(entity).State = EntityState.Modified;
         }
 
-        public async Task InsertAsync(T entity)
+        public async Task<bool> UpdateAsync<TEntity>(TEntity entity)
         {
-            await _dbContext.Set<T>().AddAsync(entity);
-        }
+            if (entity == null)
+                return false;
 
-        public void Update(T entity)
-        {
-            _dbContext.Set<T>().Attach(entity);
-            _dbContext.Entry(entity).State = EntityState.Modified;
-        }
-
-        public void Delete(T entity)
-        {
-            _dbContext.Set<T>().Remove(entity);
+            _context.Entry(entity).State = EntityState.Modified;
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }
