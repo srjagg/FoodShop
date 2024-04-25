@@ -112,7 +112,6 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var loggerFactory = services.GetRequiredService<ILoggerFactory>();
     try
     {
         var initializer = services.GetRequiredService<IBDInitializer>();
