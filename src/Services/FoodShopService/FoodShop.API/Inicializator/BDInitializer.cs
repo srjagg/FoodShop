@@ -7,47 +7,56 @@ namespace FoodShop.API.Inicializator
 {
     public class BDInitializer : IBDInitializer
     {
-        private readonly FoodShopDbContext _dbContex;
+        private readonly FoodShopDbContext _dbContext;
         private readonly IUserCore _userCore;
+        private readonly ILogger<BDInitializer> _logger;
 
-        public BDInitializer(FoodShopDbContext dbContext, IUserCore userCore)
+        public BDInitializer(FoodShopDbContext dbContext, IUserCore userCore, ILogger<BDInitializer> logger)
         {
-            _dbContex = dbContext;
+            _dbContext = dbContext;
             _userCore = userCore;
+            _logger = logger;
         }
-        public void Initialize()
+        public async Task InitializeAsync()
         {
             try
             {
-                if (_dbContex.Database.GetPendingMigrations().Any())
+                if (_dbContext.Database.GetPendingMigrations().Any())
                 {
-                    _dbContex.Database.Migrate();
+                    await _dbContext.Database.MigrateAsync();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error al migrar la base de datos");
                 throw;
             }
 
-            if (_dbContex.Users.Any()) return;
+            if (!_dbContext.Users.Any())
+            {
+                await AddDefaultUsersAsync();
+            }
+        }
 
-            //Crea el usuario administrador
-            _userCore.AddUserAsync(new UserDto
+        private async Task AddDefaultUsersAsync()
+        {
+            // Agregar usuario administrador
+            await _userCore.AddUserAsync(new UserDto
             {
                 Name = "Food Shop Admin",
                 Email = "afoodshop603@gmail.com",
                 Password = "admin123",
                 IsAdmin = true,
-            }).GetAwaiter().GetResult();
+            });
 
-            //Crea el usuario administrador
-            _userCore.AddUserAsync(new UserDto
+            // Agregar usuario normal
+            await _userCore.AddUserAsync(new UserDto
             {
                 Name = "Food Shop User",
                 Email = "user@example.com",
                 Password = "user123",
                 IsAdmin = false,
-            }).GetAwaiter().GetResult();
+            });
         }
     }
 }

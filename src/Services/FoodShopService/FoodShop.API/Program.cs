@@ -8,7 +8,6 @@ using FoodShop.Repository.RepositoryImplement;
 using FoodShop.Repository.RepositoryInterface;
 using FoodShop.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -117,7 +116,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var initializer = services.GetRequiredService<IBDInitializer>();
-        initializer.Initialize();
+        await initializer.InitializeAsync();
     }
     catch (Exception ex)
     {
