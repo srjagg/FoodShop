@@ -1,9 +1,7 @@
 ﻿using FoodShop.Core.CoreInterface;
 using FoodShop.Model.Models;
 using FoodShop.UnitOfWork;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -35,7 +33,7 @@ namespace FoodShop.Core.CoreImplement
 
             return token;
         }
-        public string GenerateJWTToken(User user)
+        private string GenerateJWTToken(User user)
         {
             var claims = new[]
             {

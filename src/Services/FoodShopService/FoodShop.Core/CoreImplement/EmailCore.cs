@@ -1,5 +1,4 @@
-﻿using FoodShop.Core.CoreInterface;
-using System.Net;
+﻿using System.Net;
 using System.Net.Mail;
 
 namespace FoodShop.Core.CoreImplement
@@ -17,14 +16,14 @@ namespace FoodShop.Core.CoreImplement
             };
         }
 
-        public async Task SendOrderConfirmationEmailAsync(string recipientEmail, string orderDetails)
+        public async Task SendOrderConfirmationEmailAsync(string recipientEmail, string orderDetails, string subject)
         {
             var fromAddress = new MailAddress("shopfood957@gmail.com", "Food Shop");
             var toAddress = new MailAddress(recipientEmail);
 
             var message = new MailMessage(fromAddress, toAddress)
             {
-                Subject = "Confirmación de Pedido",
+                Subject = subject,
                 Body = $"¡Gracias por tu compra! Aquí están los detalles de tu pedido:\n\n{orderDetails}",
                 IsBodyHtml = false
             };

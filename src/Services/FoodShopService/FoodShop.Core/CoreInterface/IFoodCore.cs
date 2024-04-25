@@ -1,5 +1,4 @@
 ﻿using FoodShop.Core.Util;
-using FoodShop.Model.Models;
 using FoodShop.Model.ModelsDto;
 
 namespace FoodShop.Core.CoreInterface

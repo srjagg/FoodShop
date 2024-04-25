@@ -94,7 +94,7 @@ namespace FoodShop.Core.CoreImplement
                 }
 
                 var orderDetails = GetOrderDetails(orderDto); 
-                await _emailCore.SendOrderConfirmationEmailAsync(user.Email, orderDetails);
+                await _emailCore.SendOrderConfirmationEmailAsync(user.Email, orderDetails, "Confirmación de Pedido");
 
                 foreach (var orderDetailDto in orderDto.OrderDetails)
                 {

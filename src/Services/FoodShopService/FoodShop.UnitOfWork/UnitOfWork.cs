@@ -1,6 +1,4 @@
-﻿using FoodShop.Model.Models;
-using FoodShop.Persistence;
-using FoodShop.Repository;
+﻿using FoodShop.Persistence;
 using FoodShop.Repository.RepositoryImplement;
 using FoodShop.Repository.RepositoryInterface;
 using Microsoft.Extensions.Configuration;
