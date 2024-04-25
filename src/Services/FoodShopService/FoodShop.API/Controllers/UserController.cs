@@ -1,5 +1,6 @@
 ﻿using FoodShop.Core.CoreInterface;
 using FoodShop.Model.ModelsDto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodShop.API.Controllers
@@ -15,6 +16,7 @@ namespace FoodShop.API.Controllers
             _userCore = userCore;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("AddUserAsync")]
         public async Task<IActionResult> AddUserAsync(UserDto userModel)
         {
