@@ -1,6 +1,5 @@
 ﻿using FoodShop.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
 
 namespace FoodShop.Repository
 {

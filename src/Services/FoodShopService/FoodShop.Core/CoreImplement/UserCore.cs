@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using FoodShop.Core.CoreInterface;
+﻿using FoodShop.Core.CoreInterface;
 using FoodShop.Core.FluentValidation;
 using FoodShop.Core.Util;
 using FoodShop.Model.Models;

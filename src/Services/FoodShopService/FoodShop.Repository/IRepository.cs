@@ -1,6 +1,4 @@
-﻿using System.Data;
-
-namespace FoodShop.Repository
+﻿namespace FoodShop.Repository
 {
     public interface IRepository<T> where T : class
     {
