@@ -1,3 +1,4 @@
+using FoodShop.API.Inicializator;
 using FoodShop.Core.CoreImplement;
 using FoodShop.Core.CoreInterface;
 using FoodShop.Core.FluentValidation;
@@ -44,6 +45,9 @@ builder.Services.AddScoped<IFoodCore, FoodCore>();
 builder.Services.AddScoped<IOrderCore, OrderCore>();
 builder.Services.AddScoped<IOrderCore, OrderCore>();
 builder.Services.AddScoped<IOrderDetailCore, OrderDetailCore>();
+
+//Initializer
+builder.Services.AddScoped<IBDInitializer, BDInitializer>();
 
 // Registra las credenciales SMTP como opciones
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
@@ -105,13 +109,15 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+//Aplicar migraciones y datos iniciales
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    var loggerFactory = services.GetRequiredService<ILoggerFactory>();
     try
     {
-        var context = services.GetRequiredService<FoodShopDbContext>();
-        context.Database.Migrate();
+        var initializer = services.GetRequiredService<IBDInitializer>();
+        initializer.Initialize();
     }
     catch (Exception ex)
     {
