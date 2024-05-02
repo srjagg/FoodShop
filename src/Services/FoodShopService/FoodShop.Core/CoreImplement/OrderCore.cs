@@ -23,117 +23,184 @@ namespace FoodShop.Core.CoreImplement
         {
             try
             {
-                // Verificar si el usuario existe
-                var user = await _unitOfWork.UserRepository.GetUserByIdAsync(orderDto.UserId);
+                var user = await GetUserOrReturnError(orderDto.UserId);
                 if (user == null)
-                {
-                    return new PetitionResponse<int>
-                    {
-                        Success = false,
-                        Message = "Usuario no encontrado",
-                        Module = "OrderCore",
-                        Result = 0
-                    };
-                }
+                    return UserNotFoundError();
 
-                // Verificar si hay detalles de pedido
-                if (orderDto.OrderDetails == null || !orderDto.OrderDetails.Any())
-                {
-                    return new PetitionResponse<int>
-                    {
-                        Success = false,
-                        Message = "No se proporcionaron detalles de pedido",
-                        Module = "OrderCore",
-                        Result = 0
-                    };
-                }
+                if (!HasOrderDetails(orderDto))
+                    return NoOrderDetailsError();
 
-                // Verificar la disponibilidad de los alimentos en el catálogo
-                foreach (var detail in orderDto.OrderDetails)
-                {
-                    var food = await _unitOfWork.FoodRepository.GetFoodByIdAsync(detail.FoodId);
-                    if (food == null || food.AvailableQuantity < detail.Quantity)
-                    {
-                        return new PetitionResponse<int>
-                        {
-                            Success = false,
-                            Message = "Alimento no disponible en el catálogo o cantidad insuficiente",
-                            Module = "OrderCore",
-                            Result = 0
-                        };
-                    }
-                }
+                var unavailableFood = await GetUnavailableFood(orderDto.OrderDetails);
+                if (unavailableFood.Any())
+                    return FoodAvailabilityError();
 
-                // Crear la orden
-                var order = new Order
-                {
-                    UserId = orderDto.UserId,
-                    OrderDate = DateTime.Now,
-                    Total = orderDto.OrderDetails.Sum(d => d.Quantity * d.UnitPrice),
-                    OrderDetails = orderDto.OrderDetails.Select(d => new OrderDetail
-                    {
-                        FoodId = d.FoodId,
-                        Quantity = d.Quantity,
-                        UnitPrice = d.UnitPrice
-                    }).ToList()
-                };
+                var order = CreateOrder(orderDto);
+                var orderId = await AddOrderToDatabase(order);
 
-                // Agregar la orden a la base de datos
-                var orderId = await _unitOfWork.OrderRepository.AddOrderAsync(order);
+                await UpdateFoodAvailability(orderDto.OrderDetails);
 
-                // Actualizar la disponibilidad de alimentos en el catálogo
-                foreach (var orderItem in orderDto.OrderDetails)
-                {
-                    var food = await _unitOfWork.FoodRepository.GetFoodByIdAsync(orderItem.FoodId);
-                    if (food != null)
-                    {
-                        food.AvailableQuantity -= orderItem.Quantity;
-                        await _unitOfWork.FoodRepository.UpdateFoodAsync(food);
-                    }
+                await SendOrderConfirmationEmail(user, orderDto);
 
-                }
+                var orderDetailResponse = await AddOrderDetails(order, orderDto.OrderDetails);
+                if (!orderDetailResponse.Success)
+                    return OrderDetailSaveError(orderDetailResponse?.Message);
 
-                var orderDetails = GetOrderDetails(orderDto); 
-                await _emailCore.SendOrderConfirmationEmailAsync(user.Email, orderDetails, "Confirmación de Pedido");
-
-                foreach (var orderDetailDto in orderDto.OrderDetails)
-                {
-
-                    orderDetailDto.OrderId = order.OrderId;
-                    var response = await _orderDetailCore.AddOrderDetailAsync(orderDetailDto);
-                    if (!response.Success)
-                    {
-                        // Manejar el error si falla al guardar el detalle del pedido
-                        return new PetitionResponse<int>
-                        {
-                            Success = false,
-                            Message = $"Error al guardar el detalle del pedido: {response.Message}",
-                            Module = "OrderCore",
-                            Result = 0
-                        };
-                    }
-                }
-
-
-                return new PetitionResponse<int>
-                {
-                    Success = true,
-                    Message = "Pedido realizado exitosamente",
-                    Module = "OrderCore",
-                    Result = order.OrderId
-                };
+                return SuccessResponse(order.OrderId);
             }
             catch (Exception ex)
             {
-                return new PetitionResponse<int>
-                {
-                    Success = false,
-                    Message = $"Error al generar el pedido: {ex.Message}",
-                    Module = "OrderCore",
-                    Result = 0
-                };
+                return GenericError(ex.Message);
             }
-            
+        }
+
+        //------------------------------------ MÉTODOS PRIVADOS -------------------------------------------------//
+
+        private async Task<User?> GetUserOrReturnError(int userId)
+        {
+            return await _unitOfWork.UserRepository.GetUserByIdAsync(userId);
+        }
+
+        private PetitionResponse<int> UserNotFoundError()
+        {
+            return new PetitionResponse<int>
+            {
+                Success = false,
+                Message = "Usuario no encontrado",
+                Module = "OrderCore",
+                Result = 0
+            };
+        }
+
+        private PetitionResponse<int> NoOrderDetailsError()
+        {
+            return new PetitionResponse<int>
+            {
+                Success = false,
+                Message = "No se proporcionaron detalles de pedido",
+                Module = "OrderCore",
+                Result = 0
+            };
+        }
+
+        private PetitionResponse<int> FoodAvailabilityError()
+        {
+            return new PetitionResponse<int>
+            {
+                Success = false,
+                Message = "Alimento no disponible en el catálogo o cantidad insuficiente",
+                Module = "OrderCore",
+                Result = 0
+            };
+        }
+
+        private PetitionResponse<int> OrderDetailSaveError(string errorMessage)
+        {
+            return new PetitionResponse<int>
+            {
+                Success = false,
+                Message = errorMessage,
+                Module = "OrderCore",
+                Result = 0
+            };
+        }
+
+        private PetitionResponse<int> SuccessResponse(int orderId)
+        {
+            return new PetitionResponse<int>
+            {
+                Success = true,
+                Message = "Pedido realizado exitosamente",
+                Module = "OrderCore",
+                Result = orderId
+            };
+        }
+
+        private PetitionResponse<int> GenericError(string errorMessage)
+        {
+            return new PetitionResponse<int>
+            {
+                Success = false,
+                Message = $"Error al generar el pedido: {errorMessage}",
+                Module = "OrderCore",
+                Result = 0
+            };
+        }
+
+        private bool HasOrderDetails(OrderDto orderDto)
+        {
+            return orderDto.OrderDetails != null && orderDto.OrderDetails.Any();
+        }
+
+        private async Task<List<int>> GetUnavailableFood(List<OrderDetailDto> orderDetails)
+        {
+            var unavailableFoodIds = new List<int>();
+            foreach (var detail in orderDetails)
+            {
+                var food = await _unitOfWork.FoodRepository.GetFoodByIdAsync(detail.FoodId);
+                if (food == null || food.AvailableQuantity < detail.Quantity)
+                    unavailableFoodIds.Add(detail.FoodId);
+            }
+            return unavailableFoodIds;
+        }
+
+        private Order CreateOrder(OrderDto orderDto)
+        {
+            return new Order
+            {
+                UserId = orderDto.UserId,
+                OrderDate = DateTime.Now,
+                Total = orderDto.OrderDetails.Sum(d => d.Quantity * d.UnitPrice),
+                OrderDetails = orderDto.OrderDetails.Select(d => new OrderDetail
+                {
+                    FoodId = d.FoodId,
+                    Quantity = d.Quantity,
+                    UnitPrice = d.UnitPrice
+                }).ToList()
+            };
+        }
+
+        private async Task<int> AddOrderToDatabase(Order order)
+        {
+            return await _unitOfWork.OrderRepository.AddOrderAsync(order);
+        }
+
+        private async Task UpdateFoodAvailability(List<OrderDetailDto> orderDetails)
+        {
+            foreach (var orderItem in orderDetails)
+            {
+                var food = await _unitOfWork.FoodRepository.GetFoodByIdAsync(orderItem.FoodId);
+                if (food != null)
+                {
+                    food.AvailableQuantity -= orderItem.Quantity;
+                    await _unitOfWork.FoodRepository.UpdateFoodAsync(food);
+                }
+            }
+        }
+
+        private async Task SendOrderConfirmationEmail(User user, OrderDto orderDto)
+        {
+            var orderDetails = GetOrderDetails(orderDto);
+            await _emailCore.SendOrderConfirmationEmailAsync(user.Email, orderDetails, "Confirmación de Pedido");
+        }
+
+        private async Task<PetitionResponse<int>> AddOrderDetails(Order order, List<OrderDetailDto> orderDetails)
+        {
+            foreach (var orderDetailDto in orderDetails)
+            {
+                orderDetailDto.OrderId = order.OrderId;
+                var response = await _orderDetailCore.AddOrderDetailAsync(orderDetailDto);
+                if (!response.Success)
+                {
+                    return new PetitionResponse<int>
+                    {
+                        Success = false,
+                        Message = $"Error al guardar el detalle del pedido: {response?.Message}",
+                        Module = "OrderCore",
+                        Result = 0
+                    };
+                }
+            }
+            return new PetitionResponse<int> { Success = true, Result = order.OrderId };
         }
 
         private string GetOrderDetails(OrderDto orderDto)
