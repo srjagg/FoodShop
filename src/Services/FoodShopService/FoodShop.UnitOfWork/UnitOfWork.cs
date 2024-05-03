@@ -1,6 +1,7 @@
 ﻿using FoodShop.Persistence;
 using FoodShop.Repository.RepositoryImplement;
 using FoodShop.Repository.RepositoryInterface;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace FoodShop.UnitOfWork
@@ -10,9 +11,9 @@ namespace FoodShop.UnitOfWork
         private readonly FoodShopDbContext _context;
         private bool _disposed = false;
 
-        public UnitOfWork(IConfiguration config)
+        public UnitOfWork(IConfiguration config, DbContextOptions<FoodShopDbContext> options)
         {
-            _context = new FoodShopDbContext(config);
+            _context = new FoodShopDbContext(config, options);
             UserRepository = new UserRepository(_context);
             OrderRepository = new OrderRepository(_context);
             FoodRepository = new FoodRepository(_context);

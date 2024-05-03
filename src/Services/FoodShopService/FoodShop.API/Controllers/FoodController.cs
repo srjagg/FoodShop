@@ -1,5 +1,4 @@
 ﻿using FoodShop.Core.CoreInterface;
-using FoodShop.Model.Models;
 using FoodShop.Model.ModelsDto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

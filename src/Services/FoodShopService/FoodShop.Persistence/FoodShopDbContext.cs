@@ -9,7 +9,7 @@ namespace FoodShop.Persistence
     {
         private readonly IConfiguration _config;
 
-        public FoodShopDbContext(IConfiguration config)
+        public FoodShopDbContext(IConfiguration config, DbContextOptions<FoodShopDbContext> options) : base(options)
         {
             _config = config;
         }
