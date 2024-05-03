@@ -1,5 +1,4 @@
-﻿using FluentValidation.TestHelper;
-using FoodShop.Core.CoreImplement;
+﻿using FoodShop.Core.CoreImplement;
 using FoodShop.Core.FluentValidation;
 using FoodShop.Model.Models;
 using FoodShop.Model.ModelsDto;
