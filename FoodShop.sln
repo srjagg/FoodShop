@@ -11,17 +11,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{9E12A081-2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FoodShopService", "FoodShopService", "{21DDC363-B430-4A44-80CB-BCDBD65FD0DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodShop.API", "src\Services\FoodShopService\FoodShop.API\FoodShop.API.csproj", "{08F4BE6C-AB76-449D-82F1-1299406EF0AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoodShop.API", "src\Services\FoodShopService\FoodShop.API\FoodShop.API.csproj", "{08F4BE6C-AB76-449D-82F1-1299406EF0AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodShop.Persistence", "src\Services\FoodShopService\FoodShop.Persistence\FoodShop.Persistence.csproj", "{1BF428F9-F0E4-4E19-BF3F-754A1A87F4E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoodShop.Persistence", "src\Services\FoodShopService\FoodShop.Persistence\FoodShop.Persistence.csproj", "{1BF428F9-F0E4-4E19-BF3F-754A1A87F4E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodShop.Core", "src\Services\FoodShopService\FoodShop.Core\FoodShop.Core.csproj", "{BF5F004F-9244-4145-BC56-7A59EF9853D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoodShop.Core", "src\Services\FoodShopService\FoodShop.Core\FoodShop.Core.csproj", "{BF5F004F-9244-4145-BC56-7A59EF9853D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodShop.Repository", "src\Services\FoodShopService\FoodShop.Repository\FoodShop.Repository.csproj", "{2384E2B5-B3AD-49CF-9B50-69D92272487C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoodShop.Repository", "src\Services\FoodShopService\FoodShop.Repository\FoodShop.Repository.csproj", "{2384E2B5-B3AD-49CF-9B50-69D92272487C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodShop.Model", "src\Services\FoodShopService\FoodShop.Model\FoodShop.Model.csproj", "{03FB7881-1BC7-4644-9237-892CD8F8E89D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoodShop.Model", "src\Services\FoodShopService\FoodShop.Model\FoodShop.Model.csproj", "{03FB7881-1BC7-4644-9237-892CD8F8E89D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodShop.UnitOfWork", "src\Services\FoodShopService\FoodShop.UnitOfWork\FoodShop.UnitOfWork.csproj", "{4B20A30D-ED9F-4FBE-9EB8-6A7C6987448D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoodShop.UnitOfWork", "src\Services\FoodShopService\FoodShop.UnitOfWork\FoodShop.UnitOfWork.csproj", "{4B20A30D-ED9F-4FBE-9EB8-6A7C6987448D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FoodShopTest", "FoodShopTest", "{744B934D-4A54-4F58-9D2A-7D391E930E47}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodShop.NUnitTest", "src\Test\Repository\FoodShop.Repository.NUnitTest\FoodShop.NUnitTest.csproj", "{A405A1B3-BA05-40DF-87E5-C8184C632083}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +57,10 @@ Global
 		{4B20A30D-ED9F-4FBE-9EB8-6A7C6987448D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B20A30D-ED9F-4FBE-9EB8-6A7C6987448D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B20A30D-ED9F-4FBE-9EB8-6A7C6987448D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A405A1B3-BA05-40DF-87E5-C8184C632083}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A405A1B3-BA05-40DF-87E5-C8184C632083}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A405A1B3-BA05-40DF-87E5-C8184C632083}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A405A1B3-BA05-40DF-87E5-C8184C632083}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,6 +75,8 @@ Global
 		{2384E2B5-B3AD-49CF-9B50-69D92272487C} = {21DDC363-B430-4A44-80CB-BCDBD65FD0DB}
 		{03FB7881-1BC7-4644-9237-892CD8F8E89D} = {21DDC363-B430-4A44-80CB-BCDBD65FD0DB}
 		{4B20A30D-ED9F-4FBE-9EB8-6A7C6987448D} = {21DDC363-B430-4A44-80CB-BCDBD65FD0DB}
+		{744B934D-4A54-4F58-9D2A-7D391E930E47} = {9E12A081-2F19-4832-88DB-A806AE1FBAF2}
+		{A405A1B3-BA05-40DF-87E5-C8184C632083} = {744B934D-4A54-4F58-9D2A-7D391E930E47}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F04A909F-44AE-4012-99AB-820E53D139C5}
