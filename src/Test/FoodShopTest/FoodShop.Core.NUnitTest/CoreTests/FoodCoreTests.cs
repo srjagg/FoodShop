@@ -4,9 +4,8 @@ using FoodShop.Model.Models;
 using FoodShop.Model.ModelsDto;
 using FoodShop.UnitOfWork;
 using Moq;
-using NUnit.Framework;
 
-namespace FoodShop.NUnitTest.CoreTests
+namespace FoodShop.Core.NUnitTest.CoreTests
 {
     [TestFixture]
     public class FoodCoreTests
@@ -41,7 +40,7 @@ namespace FoodShop.NUnitTest.CoreTests
 
             // Assert
             Assert.IsTrue(result.Success);
-            Assert.AreEqual("Alimento agregado exitosamente", result.Message);
+            Assert.That(result.Message, Is.EqualTo("Alimento agregado exitosamente"));
         }
 
         [Test]
@@ -60,7 +59,7 @@ namespace FoodShop.NUnitTest.CoreTests
 
             // Assert
             Assert.IsTrue(result.Success);
-            Assert.AreEqual(2, result.Result.Count());
+            Assert.That(result.Result.Count(), Is.EqualTo(2));
         }
     }
 }

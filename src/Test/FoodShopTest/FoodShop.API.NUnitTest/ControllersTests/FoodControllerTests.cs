@@ -4,9 +4,8 @@ using FoodShop.Core.Util;
 using FoodShop.Model.ModelsDto;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NUnit.Framework;
 
-namespace FoodShop.NUnitTest.Controllers
+namespace FoodShop.API.NUnitTest.ControllersTests
 {
     [TestFixture]
     public class FoodControllerTests
@@ -41,7 +40,7 @@ namespace FoodShop.NUnitTest.Controllers
             // Assert
             Assert.IsInstanceOf<OkObjectResult>(result);
             var okResult = result as OkObjectResult;
-            Assert.AreEqual(expectedResult, okResult.Value);
+            Assert.That(okResult?.Value, Is.EqualTo(expectedResult));
         }
 
         [Test]
@@ -65,7 +64,7 @@ namespace FoodShop.NUnitTest.Controllers
             // Assert
             Assert.IsInstanceOf<OkObjectResult>(result);
             var okResult = result as OkObjectResult;
-            Assert.AreEqual(expectedResult, okResult.Value);
+            Assert.That(okResult?.Value, Is.EqualTo(expectedResult));
         }
 
         [Test]
@@ -86,7 +85,7 @@ namespace FoodShop.NUnitTest.Controllers
             // Assert
             Assert.IsInstanceOf<OkObjectResult>(result);
             var okResult = result as OkObjectResult;
-            Assert.AreEqual(expectedResult, okResult.Value);
+            Assert.That(okResult?.Value, Is.EqualTo(expectedResult));
         }
     }
 }

@@ -3,9 +3,8 @@ using FoodShop.Persistence;
 using FoodShop.Repository.RepositoryImplement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using NUnit.Framework;
 
-namespace FoodShop.NUnitTest.Repository
+namespace FoodShop.Repository.NUnitTest.Repository
 {
     [TestFixture]
     public class FoodRepositoryTests
@@ -59,20 +58,20 @@ namespace FoodShop.NUnitTest.Repository
         public async Task AddFoodAsync_ShouldAddNewFood()
         {
             // Arrange
-            var food = new Food 
-            { 
+            var food = new Food
+            {
                 Name = "Pizza",
                 Description = "Pizza paisa",
                 Price = 15000,
-                AvailableQuantity = 10 
+                AvailableQuantity = 10
             };
 
             // Act
             var result = await _foodRepository.AddFoodAsync(food);
 
             // Assert
-            Assert.AreEqual(1, result);
-            Assert.AreEqual(1, _context.Foods.Count());
+            Assert.That(result, Is.EqualTo(1));
+            Assert.That(_context.Foods.Count(), Is.EqualTo(1));
         }
 
         [Test]
@@ -87,8 +86,8 @@ namespace FoodShop.NUnitTest.Repository
             var foodBd = await _foodRepository.GetFoodByIdAsync(food1.FoodId);
 
             //Assert
-            Assert.AreEqual(food1.FoodId, foodBd.FoodId);
-            Assert.AreEqual(food1.Name, foodBd.Name);
+            Assert.That(foodBd?.FoodId, Is.EqualTo(food1.FoodId));
+            Assert.That(foodBd.Name, Is.EqualTo(food1.Name));
         }
 
         [Test]
@@ -96,7 +95,7 @@ namespace FoodShop.NUnitTest.Repository
         public async Task FoodRepository_GetAllFood()
         {
             //Arrange
-            var expectedResult = new List<Food> {food1, food2};
+            var expectedResult = new List<Food> { food1, food2 };
             _context.Database.EnsureDeleted();
 
             //Act
@@ -105,7 +104,7 @@ namespace FoodShop.NUnitTest.Repository
             var foodList = await _foodRepository.GetAllFoodAsync();
 
             //Assert
-            CollectionAssert.AreEqual(expectedResult, foodList);
+            Assert.That(foodList, Is.EqualTo(expectedResult).AsCollection);
         }
 
         [Test]
@@ -121,7 +120,7 @@ namespace FoodShop.NUnitTest.Repository
 
             // Assert
             Assert.IsTrue(result);
-            Assert.AreEqual(0, _context.Foods.Count());
+            Assert.That(_context.Foods.Count(), Is.EqualTo(0));
         }
 
         [Test]
@@ -146,8 +145,8 @@ namespace FoodShop.NUnitTest.Repository
 
             var foodFromDb = await _foodRepository.GetFoodByIdAsync(food1.FoodId);
             Assert.IsNotNull(foodFromDb);
-            Assert.AreEqual(food1.Name, foodFromDb.Name);
-            Assert.AreEqual(food1.AvailableQuantity, foodFromDb.AvailableQuantity);
+            Assert.That(foodFromDb.Name, Is.EqualTo(food1.Name));
+            Assert.That(foodFromDb.AvailableQuantity, Is.EqualTo(food1.AvailableQuantity));
         }
     }
 }
