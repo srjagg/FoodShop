@@ -36,7 +36,7 @@ namespace FoodShop.Core.CoreImplement
                         Message = $"Error de validación: {errorMessages}",
                         Module = module,
                         URL = urlApi,
-                        Result = 1
+                        Result = 0
                     };
                 }
 
@@ -50,7 +50,7 @@ namespace FoodShop.Core.CoreImplement
                     IsAdmin = userModel.IsAdmin
                 };
 
-                await _userRepository.AddUserAsync(user);
+                var userId = await _userRepository.AddUserAsync(user);
 
                 return new PetitionResponse<int>
                 {
@@ -58,7 +58,7 @@ namespace FoodShop.Core.CoreImplement
                     Message = "Usuario agregado exitosamente",
                     Module = module,
                     URL = urlApi,
-                    Result = 0
+                    Result = userId
                 };
             }
             catch (Exception ex)
@@ -69,7 +69,7 @@ namespace FoodShop.Core.CoreImplement
                     Message = $"Error al agregar el usuario: {ex.Message}",
                     Module = module,
                     URL = urlApi,
-                    Result = 1
+                    Result = 0
                 };
             }
         }

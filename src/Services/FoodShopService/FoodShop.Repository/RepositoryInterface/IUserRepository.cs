@@ -6,5 +6,6 @@ namespace FoodShop.Repository.RepositoryInterface
     {
         Task<User?> GetUserByIdAsync(int id);
         Task<int> AddUserAsync(User user);
+        Task<bool> IsEmailUnique(string email, CancellationToken cancellationToken);
     }
 }

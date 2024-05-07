@@ -1,6 +1,7 @@
 ﻿using FoodShop.Model.Models;
 using FoodShop.Persistence;
 using FoodShop.Repository.RepositoryInterface;
+using Microsoft.EntityFrameworkCore;
 
 namespace FoodShop.Repository.RepositoryImplement
 {
@@ -21,9 +22,15 @@ namespace FoodShop.Repository.RepositoryImplement
         {
             if(_context.Users is not null)
             {
-               return await InsertAsync(user);
+               await InsertAsync(user);
+               return user.UserId;
             }
-            return 1;
+            return 0;
+        }
+
+        public async Task<bool> IsEmailUnique(string email, CancellationToken cancellationToken)
+        {
+            return !(await _context.Users.AnyAsync(u => u.Email == email, cancellationToken));
         }
     }
 }
