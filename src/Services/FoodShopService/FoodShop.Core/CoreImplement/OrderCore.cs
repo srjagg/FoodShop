@@ -53,6 +53,48 @@ namespace FoodShop.Core.CoreImplement
             }
         }
 
+        public async Task<PetitionResponse<List<OrderResponseDto>>> GetOrdersByUserEmailAsync(string userEmail)
+        {
+            try
+            {
+                var orders = await _unitOfWork.OrderRepository.GetOrdersByUserEmailAsync(userEmail);
+
+                var orderResponseDtos = orders.Select(o => new OrderResponseDto
+                {
+                    OrderId = o.OrderId,
+                    OrderDate = o.OrderDate,
+                    Total = o.Total,
+                    UserName = o.User.Name,
+                    UserEmail = o.User.Email,
+                    OrderDetails = o.OrderDetails.Select(od => new OrderDetailResponseDto
+                    {
+                        FoodId = od.FoodId,
+                        FoodName = od.Food.Name,
+                        FoodPrice = od.Food.Price,
+                        Quantity = od.Quantity
+                    }).ToList()
+                }).ToList();
+
+                return new PetitionResponse<List<OrderResponseDto>>
+                {
+                    Success = true,
+                    Message = "Órdenes obtenidas exitosamente",
+                    Module = "OrderCore",
+                    Result = orderResponseDtos
+                };
+            }
+            catch (Exception ex)
+            {
+                return new PetitionResponse<List<OrderResponseDto>>
+                {
+                    Success = false,
+                    Message = $"Error al obtener las órdenes: {ex.Message}",
+                    Module = "OrderCore",
+                    Result = null
+                };
+            }
+        }
+
         //------------------------------------ MÉTODOS PRIVADOS -------------------------------------------------//
 
         private async Task<User?> GetUserOrReturnError(int userId)
@@ -145,17 +187,25 @@ namespace FoodShop.Core.CoreImplement
 
         private Order CreateOrder(OrderDto orderDto)
         {
+            var orderDetails = new List<OrderDetail>();
+            foreach (var detailDto in orderDto.OrderDetails)
+            {
+                var food = _unitOfWork.FoodRepository.GetFoodByIdAsync(detailDto.FoodId).Result;
+                orderDetails.Add(new OrderDetail
+                {
+                    FoodId = detailDto.FoodId,
+                    Quantity = detailDto.Quantity,
+                    Food = food,
+                    UnitPrice = food.Price 
+                });
+            }
+
             return new Order
             {
                 UserId = orderDto.UserId,
                 OrderDate = DateTime.Now,
-                Total = orderDto.OrderDetails.Sum(d => d.Quantity * d.UnitPrice),
-                OrderDetails = orderDto.OrderDetails.Select(d => new OrderDetail
-                {
-                    FoodId = d.FoodId,
-                    Quantity = d.Quantity,
-                    UnitPrice = d.UnitPrice
-                }).ToList()
+                Total = orderDetails.Sum(d => d.Quantity * d.UnitPrice),
+                OrderDetails = orderDetails
             };
         }
 
@@ -211,10 +261,11 @@ namespace FoodShop.Core.CoreImplement
 
             foreach (var orderDetail in orderDto.OrderDetails)
             {
-                sb.AppendLine($"- {orderDetail.Quantity} x {orderDetail.FoodName}: ${orderDetail.Quantity * orderDetail.UnitPrice}");
+                var food = _unitOfWork.FoodRepository.GetFoodByIdAsync(orderDetail.FoodId).Result;
+                sb.AppendLine($"- {orderDetail.Quantity} x {food?.Name}: ${orderDetail.Quantity * food?.Price}");
             }
 
-            sb.AppendLine($"Total: ${orderDto.OrderDetails.Sum(d => d.Quantity * d.UnitPrice)}");
+            sb.AppendLine($"Total: ${orderDto.OrderDetails.Sum(d => d.Quantity * _unitOfWork?.FoodRepository?.GetFoodByIdAsync(d.FoodId)?.Result?.Price)}");
 
             return sb.ToString();
         }

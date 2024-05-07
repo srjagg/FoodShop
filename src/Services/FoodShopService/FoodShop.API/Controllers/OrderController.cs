@@ -1,4 +1,5 @@
-﻿using FoodShop.Core.CoreInterface;
+﻿using FoodShop.Core.CoreImplement;
+using FoodShop.Core.CoreInterface;
 using FoodShop.Model.ModelsDto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,21 @@ namespace FoodShop.API.Controllers
         public async Task<IActionResult> PlaceOrderAsync(OrderDto orderDto)
         {
             var result = await _orderCore.PlaceOrderAsync(orderDto);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+        [Authorize(Roles = "Admin,User")]
+        [HttpGet("GetOrdersByUserEmailAsync/{userEmail}")]
+        public async Task<IActionResult> GetOrdersByUserEmailAsync(string userEmail)
+        {
+            var result = await _orderCore.GetOrdersByUserEmailAsync(userEmail);
             if (result.Success)
             {
                 return Ok(result);

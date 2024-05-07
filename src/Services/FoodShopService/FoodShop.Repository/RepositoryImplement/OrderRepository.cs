@@ -1,6 +1,7 @@
 ﻿using FoodShop.Model.Models;
 using FoodShop.Persistence;
 using FoodShop.Repository.RepositoryInterface;
+using Microsoft.EntityFrameworkCore;
 
 namespace FoodShop.Repository.RepositoryImplement
 {
@@ -16,6 +17,16 @@ namespace FoodShop.Repository.RepositoryImplement
                 return orderId;
             }
             return 0;
+        }
+
+        public async Task<List<Order>> GetOrdersByUserEmailAsync(string userEmail)
+        {
+            return await _context.Orders
+                .Include(o => o.User)
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Food)
+                .Where(o => o.User.Email == userEmail)
+                .ToListAsync();
         }
     }
 }

@@ -18,12 +18,24 @@ namespace FoodShop.Core.CoreImplement
         {
             try
             {
+                var food = await _unitOfWork.FoodRepository.GetFoodByIdAsync(orderDetailDto.FoodId);
+                if (food == null)
+                {
+                    return new PetitionResponse<int>
+                    {
+                        Success = false,
+                        Message = "El alimento no existe en el catálogo",
+                        Module = "OrderDetailCore",
+                        Result = 0
+                    };
+                }
+
                 var orderDetail = new OrderDetail
                 {
                     OrderId = orderDetailDto.OrderId,
                     FoodId = orderDetailDto.FoodId,
                     Quantity = orderDetailDto.Quantity,
-                    UnitPrice = orderDetailDto.UnitPrice
+                    UnitPrice = food.Price
                 };
 
                 await _unitOfWork.OrderDetailRepository.AddOrderDetailAsync(orderDetail);
