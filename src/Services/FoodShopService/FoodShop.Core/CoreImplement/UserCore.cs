@@ -12,9 +12,8 @@ namespace FoodShop.Core.CoreImplement
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher _passwordHasher;
         private readonly UserValidator _userValidator;
-
-        private string urlApi = "/User/AddUserAsync";
-        private string module = "UserRepository";
+     
+        private string module = "UserCore";
 
         public UserCore(IUserRepository userRepository, IPasswordHasher passwordHasher, UserValidator userValidator)
         {
@@ -22,8 +21,46 @@ namespace FoodShop.Core.CoreImplement
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
             _userValidator = userValidator;
         }
+        public async Task<PetitionResponse<IEnumerable<UserDto>>> GetAllUsersAsync()
+        {
+            string urlApi = "/User/GetAllUsersAsync";
+            try
+            {
+                var allUsers = await _userRepository.GetAllUsersAsync();
+
+                var userDto = allUsers.Select(user => new UserDto
+                {
+                    UserId = user.UserId,
+                    Name = user.Name,
+                    Email = user.Email,
+                    IsAdmin = user.IsAdmin,
+                });
+
+                return new PetitionResponse<IEnumerable<UserDto>>
+                {
+                    Success = true,
+                    Message = "Usuarios obtenidos exitosamente",
+                    Module = module,
+                    Result = userDto
+                };
+            }
+            catch (Exception ex)
+            {
+                return new PetitionResponse<IEnumerable<UserDto>>
+                {
+                    Success = false,
+                    Message = $"Error al consultar los usuarios: {ex.Message}",
+                    Module = module,
+                    URL = urlApi,
+                    Result = null
+                };
+            }
+        }
+
+
         public async Task<PetitionResponse<int>> AddUserAsync(UserDto userModel)
         {
+            string urlApi = "/User/AddUserAsync";
             try
             {
                 var validationResult = await _userValidator.ValidateAsync(userModel);

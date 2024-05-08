@@ -1,4 +1,5 @@
-﻿using FoodShop.Core.CoreInterface;
+﻿using FoodShop.Core.CoreImplement;
+using FoodShop.Core.CoreInterface;
 using FoodShop.Model.ModelsDto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,14 @@ namespace FoodShop.API.Controllers
         public UserController(IUserCore userCore) 
         { 
             _userCore = userCore;
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetAllUsersAsync")]
+        public async Task<IActionResult> GetAllUsersAsync()
+        {
+            var result = await _userCore.GetAllUsersAsync();
+            return Ok(result);
         }
 
         [Authorize(Roles = "Admin")]

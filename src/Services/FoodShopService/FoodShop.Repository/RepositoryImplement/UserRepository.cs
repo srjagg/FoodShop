@@ -18,6 +18,10 @@ namespace FoodShop.Repository.RepositoryImplement
 
             return user;
         }
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        {
+            return await GetAllAsync();
+        }
         public async Task<int> AddUserAsync(User user)
         {
             if(_context.Users is not null)
