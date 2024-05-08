@@ -17,14 +17,12 @@ namespace FoodShop.UnitOfWork
             UserRepository = new UserRepository(_context);
             OrderRepository = new OrderRepository(_context);
             FoodRepository = new FoodRepository(_context);
-            OrderDetailRepository = new OrderDetailRepository(_context);
             LoginRepository = new LoginRepository(_context);
         }
 
         public IUserRepository UserRepository { get; }
         public IOrderRepository OrderRepository { get; }
         public IFoodRepository FoodRepository { get; }
-        public IOrderDetailRepository OrderDetailRepository { get; }
         public ILoginRepository LoginRepository { get; }
 
         public void SaveChanges()

@@ -7,7 +7,6 @@ namespace FoodShop.UnitOfWork
         IUserRepository UserRepository { get; }
         IOrderRepository OrderRepository { get; }
         IFoodRepository FoodRepository { get; }
-        IOrderDetailRepository OrderDetailRepository { get; }
         ILoginRepository LoginRepository { get; }
 
         void SaveChanges();

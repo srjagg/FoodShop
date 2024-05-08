@@ -32,7 +32,6 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 //repositories
 builder.Services.AddScoped<IFoodRepository, FoodRepository>();
 builder.Services.AddScoped<ILoginRepository, LoginRepository>();
-builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
@@ -43,7 +42,6 @@ builder.Services.AddScoped<IUserCore, UserCore>();
 builder.Services.AddScoped<IFoodCore, FoodCore>();
 builder.Services.AddScoped<IOrderCore, OrderCore>();
 builder.Services.AddScoped<IOrderCore, OrderCore>();
-builder.Services.AddScoped<IOrderDetailCore, OrderDetailCore>();
 
 //Initializer
 builder.Services.AddScoped<IBDInitializer, BDInitializer>();
