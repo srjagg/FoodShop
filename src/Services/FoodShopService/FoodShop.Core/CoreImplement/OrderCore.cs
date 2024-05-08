@@ -10,13 +10,11 @@ namespace FoodShop.Core.CoreImplement
     public class OrderCore : IOrderCore
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IOrderDetailCore _orderDetailCore;
         private readonly EmailCore _emailCore;
 
-        public OrderCore(IUnitOfWork unitOfWork, IOrderDetailCore orderDetailCore, EmailCore emailCore)
+        public OrderCore(IUnitOfWork unitOfWork, EmailCore emailCore)
         {
             _unitOfWork = unitOfWork;
-            _orderDetailCore = orderDetailCore;
             _emailCore = emailCore;
         }
         public async Task<PetitionResponse<int>> PlaceOrderAsync(OrderDto orderDto)
@@ -40,10 +38,6 @@ namespace FoodShop.Core.CoreImplement
                 await UpdateFoodAvailability(orderDto.OrderDetails);
 
                 await SendOrderConfirmationEmail(user, orderDto);
-
-                var orderDetailResponse = await AddOrderDetails(order, orderDto.OrderDetails);
-                if (!orderDetailResponse.Success)
-                    return OrderDetailSaveError(orderDetailResponse?.Message);
 
                 return SuccessResponse(order.OrderId);
             }
@@ -184,31 +178,25 @@ namespace FoodShop.Core.CoreImplement
             }
             return unavailableFoodIds;
         }
-
         private Order CreateOrder(OrderDto orderDto)
         {
-            var orderDetails = new List<OrderDetail>();
-            foreach (var detailDto in orderDto.OrderDetails)
-            {
-                var food = _unitOfWork.FoodRepository.GetFoodByIdAsync(detailDto.FoodId).Result;
-                orderDetails.Add(new OrderDetail
-                {
-                    FoodId = detailDto.FoodId,
-                    Quantity = detailDto.Quantity,
-                    Food = food,
-                    UnitPrice = food.Price 
-                });
-            }
-
             return new Order
             {
                 UserId = orderDto.UserId,
                 OrderDate = DateTime.Now,
-                Total = orderDetails.Sum(d => d.Quantity * d.UnitPrice),
-                OrderDetails = orderDetails
+                Total = orderDto.OrderDetails.Sum(d => d.Quantity * _unitOfWork.FoodRepository.GetFoodByIdAsync(d.FoodId).Result.Price),
+                OrderDetails = orderDto.OrderDetails.Select(d =>
+                {
+                    var food = _unitOfWork.FoodRepository.GetFoodByIdAsync(d.FoodId).Result;
+                    return new OrderDetail
+                    {
+                        FoodId = d.FoodId,
+                        Quantity = d.Quantity,
+                        UnitPrice = food.Price
+                    };
+                }).ToList()
             };
         }
-
         private async Task<int> AddOrderToDatabase(Order order)
         {
             return await _unitOfWork.OrderRepository.AddOrderAsync(order);
@@ -231,26 +219,6 @@ namespace FoodShop.Core.CoreImplement
         {
             var orderDetails = GetOrderDetails(orderDto);
             await _emailCore.SendOrderConfirmationEmailAsync(user.Email, orderDetails, "Confirmación de Pedido");
-        }
-
-        private async Task<PetitionResponse<int>> AddOrderDetails(Order order, List<OrderDetailDto> orderDetails)
-        {
-            foreach (var orderDetailDto in orderDetails)
-            {
-                orderDetailDto.OrderId = order.OrderId;
-                var response = await _orderDetailCore.AddOrderDetailAsync(orderDetailDto);
-                if (!response.Success)
-                {
-                    return new PetitionResponse<int>
-                    {
-                        Success = false,
-                        Message = $"Error al guardar el detalle del pedido: {response?.Message}",
-                        Module = "OrderCore",
-                        Result = 0
-                    };
-                }
-            }
-            return new PetitionResponse<int> { Success = true, Result = order.OrderId };
         }
 
         private string GetOrderDetails(OrderDto orderDto)
